@@ -2,8 +2,8 @@ version: "3"
 services:
   hub:
     image: selenium/hub:3.141
-    ports:
-      - "4444:4444"
+    #ports:
+     # - "4444:4444"
   chrome:
     image: selenium/node-chrome:3.141
     depends_on:
@@ -27,7 +27,7 @@ services:
       - HUB_HOST=hub
       - MODULE=search-module.xml
     volumes:
-      - ./output-from-container-firefox:/usr/share/udemy/test-output
+      - ./output/from-container-firefox:/usr/share/udemy/test-output
   search-module-chrome:
     image: nitinmanojkumar/selenium-docker
     depends_on:
@@ -38,7 +38,7 @@ services:
       - HUB_HOST=hub
       - MODULE=search-module.xml
     volumes:
-      - ./output-from-container-chrome:/usr/share/udemy/test-output
+      - ./output/from-container-chrome:/usr/share/udemy/test-output
 # version: "3"
 # services:
 #   hub:

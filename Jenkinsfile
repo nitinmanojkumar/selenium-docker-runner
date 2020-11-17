@@ -1,33 +1,27 @@
 pipeline {
-    agent none
+    agent any
     stages {
-        stage('Build Jar') {
-            agent {
-                docker {
-                    image 'maven:3-alpine'
-                    args '-v C:/Users/msivaraj/.m2:/root/.m2'
-                }
-            }
+        stage('Pull latest image') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat "docker pull nitinmanojkumar/selenium-docker"
             }
         }
-        stage('Build Image') {
+        stage('Start Grid') {
             steps {
-                script {
-                	app = docker.build("nitinmanojkumar/selenium-docker")
-                }
+                bat "cd C://JenkinsSlave//workspace//SELENIUM_DOCKER_RUNNER && docker-compose up -d hub chrome ff"
             }
+        }      
+        stage('Run Test') {
+            steps {
+                bat "cd C://JenkinsSlave//workspace//SELENIUM_DOCKER_RUNNER && docker-compose up search-module-ff search-module-chrome"
+            }
+            
         }
-        stage('Push Image') {
-            steps {
-                script {
-			        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-			        	app.push("${BUILD_NUMBER}")
-			            app.push("latest")
-			        }
-                }
-            }
+   }
+    post{
+        always{
+            archiveArtifacts artifacts: 'output/**'
+            bat "cd C://selenium-docker-runner && docker-compose down"
         }
     }
 }
